@@ -1,0 +1,17 @@
+{
+  "extends": ["airbnb-base", "prettier"],
+  "env": {
+    "node": true
+  },
+  "globals": {
+    "describe": true,
+    "it": true,
+    "before": true,
+    "after": true,
+    "afterEach": true,
+    "beforeEach": true
+  },
+  "rules": {
+    "func-names": ["error", "as-needed"]
+  }
+}
