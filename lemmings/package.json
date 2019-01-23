@@ -2,10 +2,10 @@
   "name": "lemmings",
   "version": "1.0.0",
   "description": "Lemmings",
-  "main": "server.js",
+  "main": "app.js",
   "scripts": {
-    "start": "node server.js",
-    "start:dev": "nodemon server.js",
+    "start": "node app.js",
+    "start:dev": "nodemon app.js",
     "test": "npm-run-all test:lint",
     "test:lint": "eslint lib"
   },
@@ -26,10 +26,11 @@
     "eslint-plugin-import": "^2.14.0",
     "nodemon": "^1.18.9",
     "npm-run-all": "^4.1.5",
-    "prettier": "^1.16.0"
+    "prettier": "^1.16.1"
   },
   "dependencies": {
     "dotenv": "^6.2.0",
+    "uuid": "^3.3.2",
     "winston": "^3.1.0"
   }
 }

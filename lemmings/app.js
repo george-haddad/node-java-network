@@ -1,31 +1,36 @@
 const dotenv = require('dotenv');
-const net = require('net');
+const { startServer, stopServer } = require('./server');
 const logger = require('./lib/utils/logger').Logger;
 
 dotenv.config({ silent: true });
 
-let app;
+const PORT = process.env.PORT || 3000;
+const HOST = process.env.HOST || 'localhost';
+let exiting = false;
 
-async function startApp() {
-  app = net
-    .createServer(socket => {
-      socket.end('Bye bye\r\n');
-    })
-    .on('error', err => {
-      if (err) {
-        logger.error(`got error: ${err.name}`);
-        logger.error(err);
-      }
+startServer().then(app => {
+  app.listen(PORT, HOST, () => {
+    logger.info(`listening on ${HOST}:${PORT}`);
+  });
+});
+
+function shutdown() {
+  logger.info('Received SIGINT or SIGTERM');
+
+  if (exiting) {
+    return;
+  }
+
+  exiting = true;
+  logger.info('Attempting to gracefully shutdown the server');
+
+  setTimeout(() => {
+    stopServer().then(() => {
+      logger.info('Shutting down gracefully');
+      process.exit(0);
     });
-
-  return app;
+  }, 5000);
 }
 
-async function stopApp() {
-  logger.info('Performing cleanups');
-}
-
-module.exports = {
-  startApp,
-  stopApp,
-};
+process.on('SIGINT', shutdown);
+process.on('SIGTERM', shutdown);
