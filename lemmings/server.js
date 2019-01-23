@@ -1,35 +1,46 @@
 const dotenv = require('dotenv');
-const { startApp, stopApp } = require('./app');
+const net = require('net');
 const logger = require('./lib/utils/logger').Logger;
 
 dotenv.config({ silent: true });
 
-const PORT = process.env.PORT || 3000;
-let exiting = false;
+let server;
 
-startApp().then(app => {
-  app.listen(PORT, () => {
-    logger.info(`listening on port ${PORT}`);
+async function startServer() {
+  server = net.createServer();
+  server.on('error', err => {
+    if (err) {
+      logger.error(`got error: ${err.name}`);
+      logger.error(err);
+    }
   });
-});
 
-function shutdown() {
-  logger.info('Received SIGINT or SIGTERM');
-
-  if (exiting) {
-    return;
-  }
-
-  exiting = true;
-  logger.info('Attempting to gracefully shutdown the server');
-
-  setTimeout(() => {
-    stopApp().then(() => {
-      logger.info('Shutting down gracefully');
-      process.exit(0);
+  server.on('connection', socket => {
+    logger.info(`connection establish with ${socket.remoteAddress}`);
+    socket.setEncoding('utf-8');
+    socket.setTimeout(10000);
+    socket.on('data', data => {
+      logger.info(`received data: ${data}`);
     });
-  }, 5000);
+    socket.on('error', err => {
+      logger.error(err);
+    });
+    socket.on('close', hadError => {
+      logger.info(`Closing socket`);
+      if (hadError) {
+        logger.info('Yes it had an error');
+      }
+    });
+  });
+
+  return server;
 }
 
-process.on('SIGINT', shutdown);
-process.on('SIGTERM', shutdown);
+async function stopServer() {
+  logger.info('Performing cleanups');
+}
+
+module.exports = {
+  startServer,
+  stopServer,
+};
