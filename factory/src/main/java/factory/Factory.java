@@ -18,7 +18,7 @@ public class Factory {
     private ObjectMapper mapper = new ObjectMapper();
     
     public Factory() {
-        RedisClient client = RedisClient.create("redis://127.0.0.1");
+        RedisClient client = RedisClient.create("redis://127.0.0.1:6380");
         StatefulRedisConnection<String, String> connection = client.connect();
         StatefulRedisPubSubConnection<String, String> connPubSub = client.connectPubSub();
         RedisPubSubAsyncCommands<String, String> pubSubAsync = connPubSub.async();
@@ -32,6 +32,7 @@ public class Factory {
                         String json;
                         try {
                             json = mapper.writeValueAsString(lemmings[i]);
+                            System.out.println("Sending lemmings: "+json);
                             pubSubAsync.publish("lemmings", json);
                         }
                         catch(JsonProcessingException e) {
@@ -43,7 +44,7 @@ public class Factory {
         };
         
         executorService = Executors.newScheduledThreadPool(1);
-        executorService.scheduleAtFixedRate(publishLemmings, 0, 10, TimeUnit.MILLISECONDS);
+        executorService.scheduleAtFixedRate(publishLemmings, 0, 10, TimeUnit.SECONDS);
         executorService.schedule(new Runnable() {
             @Override
             public void run() {
