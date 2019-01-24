@@ -1,0 +1,10 @@
+{
+  "name": "Lemmings Cave",
+  "redis": {
+	  "host": "127.0.0.1",
+	  "port": 6380,
+	  "encoding": "UTF-8",
+	  "tcpKeepAlive": true,
+	  "tcpNoDelay": true
+  }
+}
