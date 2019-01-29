@@ -34,7 +34,7 @@ public class MainVerticle extends AbstractVerticle {
         
         router.route("/shutdown").handler(new ShutdownHandler(vertx));
         server.requestHandler(router).listen(8080, handler -> {
-            logger.info("HTTP server started on port 8080");
+            logger.info("HTTP server v2 started on port 8080");
         });
         
         HttpServerOptions options = new HttpServerOptions();

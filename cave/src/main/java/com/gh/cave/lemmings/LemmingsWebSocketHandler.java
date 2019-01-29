@@ -33,9 +33,9 @@ public class LemmingsWebSocketHandler {
     private void init() {
         initRedis();
         
-        vertx.eventBus().<String> consumer("io.vertx.redis.lemmings", received -> {
-            String jsonLemming = received.body();
-            logger.debug("redis -> "+jsonLemming);
+        vertx.eventBus().<JsonObject> consumer("io.vertx.redis.lemmings", received -> {
+            JsonObject jsonBody = received.body();
+            String jsonLemming = jsonBody.toString();
             webSocket.writeTextMessage(jsonLemming);
         });
         
