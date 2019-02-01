@@ -33,16 +33,17 @@ public class LemmingsWebSocketHandler {
     private void init() {
         initRedis();
 
-        vertx.eventBus().<JsonObject>consumer("io.vertx.redis.lemmings", received -> {
-            JsonObject jsonBody = received.body();
-            String jsonLemming = jsonBody.toString();
-            webSocket.writeTextMessage(jsonLemming);
+        vertx.eventBus().<JsonObject> consumer("io.vertx.redis.lemmings", received -> {
+            JsonObject jsonValue = received.body().getJsonObject("value");
+            String lemming = jsonValue.getString("message");
+            logger.debug("received: " + lemming);
+            webSocket.writeTextMessage(lemming);
         });
 
         webSocket.textMessageHandler(new Handler<String>() {
             @Override
             public void handle(String msg) {
-                logger.info("ws -> " + msg);
+                logger.debug("ws -> " + msg);
             }
         });
 
@@ -65,20 +66,21 @@ public class LemmingsWebSocketHandler {
 
         RedisOptions redisOptions = new RedisOptions().setHost(host).setPort(port).setEncoding(encoding);
 
-        ((NetClientOptions) redisOptions).setTcpKeepAlive(tcpKeepAlive).setTcpNoDelay(tcpNoDelay);
+        ((NetClientOptions)redisOptions).setTcpKeepAlive(tcpKeepAlive).setTcpNoDelay(tcpNoDelay);
 
         RedisClient redis = RedisClient.create(vertx, redisOptions);
         redis.subscribe("lemmings", res -> {
-            if (res.succeeded()) {
+            if(res.succeeded()) {
                 logger.info("subscribed to \"lemmings\" channel");
-            } else {
+            }
+            else {
                 logger.warn("unable to subscribe to \"lemmings\" channel");
             }
         });
     }
 
     public void setVertx(Vertx vertx) throws NullPointerException {
-        if (vertx == null) {
+        if(vertx == null) {
             throw new NullPointerException("vertx cannot be set to null");
         }
 
@@ -86,7 +88,7 @@ public class LemmingsWebSocketHandler {
     }
 
     public void setServerWebSocket(ServerWebSocket webSocket) throws NullPointerException {
-        if (webSocket == null) {
+        if(webSocket == null) {
             throw new NullPointerException("websocket cannot be set to null");
         }
 
@@ -94,7 +96,7 @@ public class LemmingsWebSocketHandler {
     }
 
     public void close() {
-        if (redis != null) {
+        if(redis != null) {
             redis.close(handler -> {
                 logger.info("disconnected from Redis \"lemmings\" channel");
             });

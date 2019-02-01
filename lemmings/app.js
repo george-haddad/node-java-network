@@ -28,14 +28,14 @@ ws.on('open', () => {
 
 ws.on('message', data => {
   if (data) {
-    const lemming = data.message;
-    log.info(`lemming from cave: ${lemming}`);
+    const lemming = JSON.parse(data);
+    log.info('lemming from cave', lemming);
   }
 });
 
 ws.on('close', (code, reason) => {
   log.info(`server disconnected from ws://${WS_HOST}:${WS_PORT}/lemmings/cave`);
-  log.info(`closed ws (${code}) ${reason}`);
+  log.info(`closed ws with code ${code} ${reason}`);
 });
 
 ws.on('error', err => {

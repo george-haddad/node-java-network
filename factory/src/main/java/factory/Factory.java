@@ -24,9 +24,10 @@ public class Factory {
         RedisPubSubAsyncCommands<String, String> pubSubAsync = connPubSub.async();
 
         Runnable publishLemmings = new Runnable() {
+
             @Override
             public void run() {
-                Lemming[] lemmings = lemmingGenerator.generate(10);
+                Lemming[] lemmings = lemmingGenerator.generate(1);
                 if(lemmings != null) {
                     for(int i = 0; i < lemmings.length; i++) {
                         String json;
@@ -46,6 +47,7 @@ public class Factory {
         executorService = Executors.newScheduledThreadPool(1);
         executorService.scheduleAtFixedRate(publishLemmings, 0, 10, TimeUnit.SECONDS);
         executorService.schedule(new Runnable() {
+
             @Override
             public void run() {
                 System.out.println("Shutting down");
@@ -54,7 +56,7 @@ public class Factory {
                 client.shutdown();
                 executorService.shutdown();
             }
-        }, 5, TimeUnit.MINUTES);
+        }, 3, TimeUnit.HOURS);
     }
 
     public static void main(String... args) {
