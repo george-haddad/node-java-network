@@ -3,17 +3,17 @@ const dotenv = require('dotenv');
 
 dotenv.config({ silent: true });
 
-function getWinstonLogger() {
+const getWinstonLogger = () => {
   const logger = winston.createLogger({
     level: process.env.LOGGING_LEVEL || 'info',
     format: winston.format.json(),
     transports: [
       new winston.transports.File({
-        filename: './logs/error.log',
+        filename: `./logs/error.log`,
         level: 'error',
       }),
       new winston.transports.File({
-        filename: './logs/combined.log',
+        filename: `./logs/combined.log`,
       }),
     ],
   });
@@ -27,8 +27,6 @@ function getWinstonLogger() {
   }
 
   return logger;
-}
-
-module.exports = {
-  Logger: getWinstonLogger(),
 };
+
+module.exports = getWinstonLogger();

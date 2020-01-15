@@ -28,9 +28,9 @@ mainClassName = 'io.vertx.core.Launcher'
 def mainVerticleName = 'com.gh.cave.MainVerticle'
 def watchForChange = 'src/**/*'
 def doOnChange = './gradlew classes'
+def mainVerticleConfig = 'src/main/conf/service-conf.json'
 
 dependencies {
-
   implementation "io.vertx:vertx-core:$vertxVersion"
   implementation "io.vertx:vertx-rx-java2:$vertxVersion"
   implementation "io.vertx:vertx-core:$vertxVersion"
@@ -40,7 +40,6 @@ dependencies {
   testImplementation "io.vertx:vertx-junit5:$vertxVersion"
   testRuntime("org.junit.jupiter:junit-jupiter-engine:$junitJupiterEngineVersion")
 }
-
 
 shadowJar {
   classifier = 'fat'
@@ -60,7 +59,7 @@ test {
 }
 
 run {
-  args = ['run', mainVerticleName, "--redeploy=$watchForChange", "--launcher-class=$mainClassName", "--on-redeploy=$doOnChange", "-conf=src/main/conf/service-conf.json"]
+  args = ['run', mainVerticleName, "--redeploy=$watchForChange", "--launcher-class=$mainClassName", "--on-redeploy=$doOnChange", "-conf=$mainVerticleConfig"]
 }
 
 task wrapper(type: Wrapper) {
